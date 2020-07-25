@@ -1,7 +1,6 @@
 #! /usr/bin/python3.7
 # -*- coding: utf-8 -*-
-import os
-import sys
+import os, sys
 from instabot import Bot
 from getpass import getpass
 from datetime import datetime
@@ -14,7 +13,7 @@ def clear():
     else:
         os.system("clear")
 
-
+#De quien serán los  contactos...
 def define_usuarios():
     clear()
     print("""Método de ingreso de usuarios:
@@ -25,23 +24,30 @@ def define_usuarios():
 
     """)
     met_usuarios = input()
+
+    #Ingreso manual:
     if(int(met_usuarios) == 1):
         print("""Indicar usuario o usuarios objetivo separados por una coma.
         Ejemplo: usuario1,usuario2,usuario3
         """)
         user2follow = input()
         user2follow = user2follow.replace(" ","").split(",")
+    #Ingreso por archivo:
     elif(int(met_usuarios) == 2):
 
+        #revisamos si existe archivo...
+        #Si existe:
         if(os.path.isfile('instab0t.txt')):
             lista_usuarios = open("instab0t.txt", "r")
             lista_usuarios = lista_usuarios.readlines()
 
             user2follow = []
+            #agregando usuarios a la lista:
             for u in lista_usuarios:
                   u = u.strip()
                   user2follow.append(u)
 
+        #Si no se encuentra archivo:
         else:
             clear()
             print("""No se encontró archivo!
@@ -65,6 +71,8 @@ def define_usuarios():
         print("Opción incorrecta!")
         time.sleep(2)
         define_usuarios()
+
+    #finalmente devuelve lista con las cuentas a procesar:
     return user2follow
 
 #siguiento seguidores de usuario:
@@ -72,8 +80,8 @@ def define_usuarios():
 def seg_seguidores():
     usuarios_a_seguir = define_usuarios()
     for user in usuarios_a_seguir:
-        print("Dando like a seguidores de: ", user)
-        #bot.follow_following(user)
+        print("Dando like a seguidos de: ", user)
+        #bot.follow_followers(user)
         time.sleep(2)
 
 #siguiento seguidos de usuario:
@@ -82,7 +90,7 @@ def seg_seguidos():
     usuarios_a_seguir = define_usuarios()
     for user in usuarios_a_seguir:
         print("Siguiendo a seguidores de: ", user)
-        #bot.follow_followers(user)
+        #bot.follow_following(user)
         time.sleep(2)
 
 #dando likes a ultima publicacion:
@@ -96,6 +104,7 @@ def mg_ult_publ(cant):
 
 def opciones():
     clear()
+    #imprimimos la challa:
     print("""
       ___           _  __              _
      / _ \ _ __  __(_)/  \ _ _  ___ __(_)
@@ -116,14 +125,15 @@ def opciones():
 
     opcion = input("[┐∵]┘ --> Ingrese opción:")
 
+    #Llamamos a funcion dependiendo de opción.
     if(int(opcion) == 1):
         seg_seguidores()
-        print("\n\n Proceso terminado!, Enter para volver al menu.")
+        print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
         opciones()
     elif(int(opcion) == 2):
         seg_seguidos()
-        print("\n\n Proceso terminado!, Enter para volver al menu.")
+        print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
         opciones()
     elif(int(opcion) == 3):
@@ -131,7 +141,7 @@ def opciones():
         cant_mg = input(" Ingrese cantidad de MG a dar: ")
         print("Dando Me Gusta a ultima(s) publicación(es)!")
         mg_ult_publ(cant_mg)
-        print("\n\n Proceso terminado!, Enter para volver al menu.")
+        print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
         opciones()
         print("Proceso finalizado!")
@@ -147,28 +157,45 @@ def opciones():
         time.sleep(2)
         opciones()
 
-clear()
+def main():
+    clear()
 
-print(""" _         _        _     __  _
-(_)_ _  __| |_ __ _| |__ /  \| |_
-| | ' \(_-<  _/ _` | '_ \ () |  _|
-|_|_||_/__/\__\__,_|_.__/\__/ \__|...[┐∵]┘
-""","-"*40)
+    print(""" _         _        _     __  _
+    (_)_ _  __| |_ __ _| |__ /  \| |_
+    | | ' \(_-<  _/ _` | '_ \ () |  _|
+    |_|_||_/__/\__\__,_|_.__/\__/ \__|...[┐∵]┘
+    ""","-"*40)
 
-usuario = input("Ingrese su nombre de usuario:\n")
-password = getpass("Ingrese contraseña:\n")
+    #ingresamos usuario y contraseña desde consola.
+    #Tambien puede dejarse el login fijo comentando lineas de abajo
+    #y habilidanto las siguientes:
+    #(modificamos el contenido interior de las comillas)
 
-clear()
+    #usuario = input("Ingrese su nombre de usuario:\n")
+    #password = getpass("Ingrese contraseña:\n")
 
-print("Creando Bot e iniciando sesión... \n\n Log:\n")
-time.sleep(1)
-bot = Bot(
-    filter_users=True,
-    filter_private_users=False,
-    filter_previously_followed=True,
-    filter_business_accounts=True,
-    filter_verified_accounts=True,
-    )
-#bot.login(username=usuario, password=password) #tambien podemos agregar proxy=''
+    #usuario fijo:
+    usuario = 'yagami44686'
+    password = 'corollake35'
 
-opciones()
+    clear()
+
+    print("Creando Bot e iniciando sesión... \n\n Log:\n")
+    time.sleep(1)
+
+    #Opciones del Bot:
+    bot = Bot(
+        filter_users=True,
+        filter_private_users=False,
+        filter_previously_followed=True,
+        filter_business_accounts=True,
+        filter_verified_accounts=True,
+        )
+
+    #Ingresando a IG:
+    #bot.login(username=usuario, password=password) #tambien podemos agregar proxy=''
+
+    opciones()
+
+#El principio...
+main()
