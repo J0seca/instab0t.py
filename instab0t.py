@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/python3.7
 # -*- coding: utf-8 -*-
 import os
 import sys
@@ -7,11 +7,13 @@ from getpass import getpass
 from datetime import datetime
 import time
 
+#primero lo primero:
 def clear():
     if os.name == "nt":
         os.system("cls")
     else:
         os.system("clear")
+
 
 def define_usuarios():
     clear()
@@ -70,8 +72,8 @@ def define_usuarios():
 def seg_seguidores():
     usuarios_a_seguir = define_usuarios()
     for user in usuarios_a_seguir:
+        print("Dando like a seguidores de: ", user)
         #bot.follow_following(user)
-        print("Dando like a seguidor: ", user)
         time.sleep(2)
 
 #siguiento seguidos de usuario:
@@ -79,8 +81,8 @@ def seg_seguidores():
 def seg_seguidos():
     usuarios_a_seguir = define_usuarios()
     for user in usuarios_a_seguir:
+        print("Siguiendo a seguidores de: ", user)
         #bot.follow_followers(user)
-        print("Dando Siguiendo a seguido: ", user)
         time.sleep(2)
 
 #dando likes a ultima publicacion:
@@ -88,8 +90,8 @@ def seg_seguidos():
 def mg_ult_publ(cant):
     usuarios_a_seguir = define_usuarios()
     for user in usuarios_a_seguir:
+        print("Dando ", str(cant), " likes a ", user)
         #bot.like_user(user, amount=cant, filtration=False)
-        rint("Dando like a: ", user)
         time.sleep(2)
 
 def opciones():
@@ -145,8 +147,8 @@ def opciones():
         time.sleep(2)
         opciones()
 
-
 clear()
+
 print(""" _         _        _     __  _
 (_)_ _  __| |_ __ _| |__ /  \| |_
 | | ' \(_-<  _/ _` | '_ \ () |  _|
