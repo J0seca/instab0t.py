@@ -53,12 +53,12 @@ def define_usuarios():
         user2follow = input()
         user2follow = user2follow.replace(" ","").split(",")
     #Ingreso por archivo:
-    elif(int(met_usuarios) == 2):
 
+    elif(int(met_usuarios) == 2):
         #revisamos si existe archivo...
         #Si existe:
-        if(os.path.isfile('instab0t.txt')):
-            lista_usuarios = open("instab0t.txt", "r")
+        if(os.path.isfile('instab0t_usr.txt')):
+            lista_usuarios = open("instab0t_usr.txt", "r")
             lista_usuarios = lista_usuarios.readlines()
 
             user2follow = []
@@ -72,7 +72,7 @@ def define_usuarios():
             clear()
             print("""No se encontró archivo!
 
-                Creando archivo instab0t.txt
+                Creando archivo instab0t_usr.txt
 
                 IMPORTANTE: El archivo debe tener una columna con un usuario por fila.
 
@@ -83,7 +83,7 @@ def define_usuarios():
                 usuari03
 
                 """)
-            open("instab0t.txt","w")
+            open("instab0t_usr.txt","w")
             print("Archivo creado!, presione cualquier tecla para continuar.")
             input()
             exit()
@@ -122,6 +122,52 @@ def mg_ult_publ(cant):
         bot.like_user(user, amount=int(cant), filtration=False)
         time.sleep(2)
 
+def like_a_seguidores():
+    usuarios_like = bot.get_followers(usuario)
+    print("\nSe dará like a un total de ", str(len(usuarios_like)), " usuarios.")
+    for user in usuarios_like:
+        print("Dando like a ", user)
+        bot.like_user(user, amount=1, filtration=False)
+        time.sleep(2)
+
+def comentar_seguidores():
+    seguidores_like = define_usuarios()
+    print("\nTotal usuariosa seguir: ", str(len(seguidores_like)))
+    print("\nIniciando...\n")
+
+    if(not os.path.isfile('comentarios_instab0t.txt')):
+        print("\nArchivo de comentarios no existe!. Creando archivo: isntab0t_comentarios.txt")
+        arch_comentarios = open("comentarios_instab0t.txt","w")
+        arch_comentarios.write("Buena foto!\n")
+
+    else:
+        arch_comentarios = open("comentarios_instab0t.txt","r")
+        arch_comentarios = arch_comentarios.readlines()
+
+        if(len(arch_comentarios) == 0):
+            print("\nArchivo de comentarios vacío. Volviendo a menú.")
+
+        elif((len(arch_comentarios) > 0) and (len(seguidores_like) == 1)):
+            print("Iniciando proceso de comentarios...")
+            bot.comment_users(seguidores_like)
+        else:
+            print("Iniciando proceso de comentarios...")
+            for seguidor in seguidores_like:
+                bot.comment_users(seguidor)
+
+def like_hashtag():
+    print("""Indicar hashtag separados por una coma. (puede ser con o sin #)
+        Ejemplo: hastag1,hashtag2,#hashtag3
+        """)
+    hash2like = input()
+
+    cant_hash = input("\nIngrese total de likes a dar por hashtag: ")
+    hash2like = hash2like.replace(" ","").replace("#","").split(",")
+
+    for hashtag in hash2like:
+        bot.like_hashtag(hashtag, amount=cant_hash)
+
+
 def opciones():
     clear()
     #imprimimos la challa:
@@ -157,11 +203,13 @@ def opciones():
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
         opciones()
+
     elif(int(opcion) == 2):
         seg_seguidos()
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
         opciones()
+
     elif(int(opcion) == 3):
         clear()
         cant_mg = input(" Ingrese cantidad de publicaciones a dar like: ")
@@ -173,37 +221,14 @@ def opciones():
 
     elif(int(opcion) == 4):
         clear()
-        Print("Recolectando seguidores de usuario...")
-        time.sleep(2)
-        seguidores_like = get_user_followers(usuario)
-        print("Total de usuarios en archivo: ", str(len(seguidores_like)))
-
-        for seguidor in seguidores_like:
-            bot.like_user(seguidor)
-
+        like_a_seguidores()
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
         opciones()
 
     elif(int(opcion) == 5):
         clear()
-        seguidores_like = define_usuarios()
-        print("Total de usuarios en archivo:", str(len(seguidores_like)))
-        print("\nIniciando proceso...\n")
-
-        if(not os.path.isfile('instab0t_comentarios.txt')):
-            print("\nArchivo de comantarios no existe!. Creando archivo: isntab0t_comentarios.txt")
-            arch_comentarios = open("instab0t_comentarios.txt","w")
-            arch_comentarios.write("Buena foto!\n")
-        else:
-            arch_comentarios = open("instab0t_comentarios.txt","r")
-            arch_comentarios = arch_comentarios.readlines()
-            if(len(arch_comentarios) == 0):
-                print("\nArchivo de comentarios vacío. Volviendo a menú.")
-            else:
-                print("Iniciando proceso de comantarios...")
-                for seguidor in seguidores_like:
-                    bot.comment_user(seguidor)
+        comentar_seguidores()
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
         opciones()
@@ -211,14 +236,7 @@ def opciones():
 
     elif(int(opcion) == 6):
         clear()
-        print("""Indicar hashtag separados por una coma. (puede ser con o sin #)
-            Ejemplo: hastag1,hashtag2,#hashtag3
-            """)
-        hash2like = input()
-        cant_hash = input("\nIngrese total de likes a dar por hashtag: ")
-        hash2like = hash2like.replace(" ","").replace("#","").split(",")
-        for hashtag in hash2like:
-            bot.like_hashtag(hashtag, amount=cant_hash)
+        like_hashtag()
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
         opciones()
@@ -253,8 +271,8 @@ def main(bot):
     #password = getpass("Ingrese contraseña:\n")
 
     #usuario fijo:
-    usuario = 'xxxxxxxxx'
-    password = 'xxxxxxxxx'
+    usuario = 'yagami44686'
+    password = 'corollake35'
 
     clear()
 
