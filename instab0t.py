@@ -6,12 +6,32 @@ from getpass import getpass
 from datetime import datetime
 import time
 
-#primero lo primero:
+#primero lo primero, para limpiar la ventana:
 def clear():
     if os.name == "nt":
         os.system("cls")
     else:
         os.system("clear")
+
+#Opciones del Bot:
+bot = Bot(
+    filter_users=True,
+    filter_private_users=False,
+    filter_previously_followed=True,
+    filter_business_accounts=True,
+    filter_verified_accounts=True,
+    max_likes_per_day=200,
+    max_follows_per_day=200,
+    max_followers_to_follow=2000, #si tiene mas seguidores ignora la cuenta
+    min_followers_to_follow=60, #si tiene menos seguidores ignora
+    min_media_count_to_follow=10, #si tiene menos de estas publicaciones ignora
+    like_delay =10,
+    unlike_delay =10,
+    follow_delay =30,
+    unfollow_delay =30,
+    comments_file='comentarios_instab0t.txt',
+    comment_delay=60,
+    )
 
 #De quien serán los  contactos...
 def define_usuarios():
@@ -81,7 +101,7 @@ def seg_seguidores():
     usuarios_a_seguir = define_usuarios()
     for user in usuarios_a_seguir:
         print("Dando like a seguidos de: ", user)
-        #bot.follow_followers(user)
+        bot.follow_followers(user)
         time.sleep(2)
 
 #siguiento seguidos de usuario:
@@ -90,7 +110,7 @@ def seg_seguidos():
     usuarios_a_seguir = define_usuarios()
     for user in usuarios_a_seguir:
         print("Siguiendo a seguidores de: ", user)
-        #bot.follow_following(user)
+        bot.follow_following(user)
         time.sleep(2)
 
 #dando likes a ultima publicacion:
@@ -99,7 +119,7 @@ def mg_ult_publ(cant):
     usuarios_a_seguir = define_usuarios()
     for user in usuarios_a_seguir:
         print("Dando ", str(cant), " likes a ", user)
-        #bot.like_user(user, amount=cant, filtration=False)
+        bot.like_user(user, amount=int(cant), filtration=False)
         time.sleep(2)
 
 def opciones():
@@ -118,9 +138,15 @@ def opciones():
 
     2- Seguir *seguidos* por uno o varios usuarios.
 
-    3- Like a ultima publicación de usuarios.
+    3- Like a últimas publicaciones de usuario.
 
-    4- Salir.
+    4- Like a última publicación de seguidores.
+
+    5- Comentar última publicación de seguidores.
+
+    6- Dar like a ultimas publicaciones de uno o mas hashtag.
+
+    7- Salir.
     """, "-"*40)
 
     opcion = input("[┐∵]┘ --> Ingrese opción:")
@@ -138,16 +164,66 @@ def opciones():
         opciones()
     elif(int(opcion) == 3):
         clear()
-        cant_mg = input(" Ingrese cantidad de MG a dar: ")
-        print("Dando Me Gusta a ultima(s) publicación(es)!")
+        cant_mg = input(" Ingrese cantidad de publicaciones a dar like: ")
+        print("Dando Like a ", str(cant_mg), " última(s) publicación(es)!")
         mg_ult_publ(cant_mg)
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
         opciones()
-        print("Proceso finalizado!")
-        time.sleep(2)
-        opciones()
+
     elif(int(opcion) == 4):
+        clear()
+        Print("Recolectando seguidores de usuario...")
+        time.sleep(2)
+        seguidores_like = get_user_followers(usuario)
+        print("Total de usuarios en archivo: ", str(len(seguidores_like)))
+
+        for seguidor in seguidores_like:
+            bot.like_user(seguidor)
+
+        print("\n\n Proceso terminado!, Enter para volver al menú principal.")
+        input()
+        opciones()
+
+    elif(int(opcion) == 5):
+        clear()
+        seguidores_like = define_usuarios()
+        print("Total de usuarios en archivo:", str(len(seguidores_like)))
+        print("\nIniciando proceso...\n")
+
+        if(not os.path.isfile('instab0t_comentarios.txt')):
+            print("\nArchivo de comantarios no existe!. Creando archivo: isntab0t_comentarios.txt")
+            arch_comentarios = open("instab0t_comentarios.txt","w")
+            arch_comentarios.write("Buena foto!\n")
+        else:
+            arch_comentarios = open("instab0t_comentarios.txt","r")
+            arch_comentarios = arch_comentarios.readlines()
+            if(len(arch_comentarios) == 0):
+                print("\nArchivo de comentarios vacío. Volviendo a menú.")
+            else:
+                print("Iniciando proceso de comantarios...")
+                for seguidor in seguidores_like:
+                    bot.comment_user(seguidor)
+        print("\n\n Proceso terminado!, Enter para volver al menú principal.")
+        input()
+        opciones()
+
+
+    elif(int(opcion) == 6):
+        clear()
+        print("""Indicar hashtag separados por una coma. (puede ser con o sin #)
+            Ejemplo: hastag1,hashtag2,#hashtag3
+            """)
+        hash2like = input()
+        cant_hash = input("\nIngrese total de likes a dar por hashtag: ")
+        hash2like = hash2like.replace(" ","").replace("#","").split(",")
+        for hashtag in hash2like:
+            bot.like_hashtag(hashtag, amount=cant_hash)
+        print("\n\n Proceso terminado!, Enter para volver al menú principal.")
+        input()
+        opciones()
+
+    elif(int(opcion) == 7):
         clear()
         print("Saliendo de programa! [∵]┘")
         time.sleep(1)
@@ -157,15 +233,17 @@ def opciones():
         time.sleep(2)
         opciones()
 
-def main():
+
+def main(bot):
     clear()
 
-    print(""" _         _        _     __  _
+    print("""
+     _         _        _     __  _
     (_)_ _  __| |_ __ _| |__ /  \| |_
     | | ' \(_-<  _/ _` | '_ \ () |  _|
     |_|_||_/__/\__\__,_|_.__/\__/ \__|...[┐∵]┘
     ""","-"*40)
-
+    time.sleep(1)
     #ingresamos usuario y contraseña desde consola.
     #Tambien puede dejarse el login fijo comentando lineas de abajo
     #y habilidanto las siguientes:
@@ -180,22 +258,12 @@ def main():
 
     clear()
 
-    print("Creando Bot e iniciando sesión... \n\n Log:\n")
+    print("Iniciando sesión... \n\n Log:\n")
     time.sleep(1)
-
-    #Opciones del Bot:
-    bot = Bot(
-        filter_users=True,
-        filter_private_users=False,
-        filter_previously_followed=True,
-        filter_business_accounts=True,
-        filter_verified_accounts=True,
-        )
-
     #Ingresando a IG:
-    #bot.login(username=usuario, password=password) #tambien podemos agregar proxy=''
+    bot.login(username=usuario, password=password) #tambien podemos agregar proxy=''
 
     opciones()
 
-#El principio...
-main()
+#Y al final, El principio...
+main(bot)
