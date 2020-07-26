@@ -253,8 +253,8 @@ def main(bot):
     #password = getpass("Ingrese contraseña:\n")
 
     #usuario fijo:
-    usuario = 'yagami44686'
-    password = 'corollake35'
+    usuario = 'xxxxxxxxx'
+    password = 'xxxxxxxxx'
 
     clear()
 
