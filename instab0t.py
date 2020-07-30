@@ -15,21 +15,30 @@ def clear():
 
 #Opciones del Bot:
 bot = Bot(
-    filter_users=True,
+    filter_users=False,
     filter_private_users=False,
-    filter_previously_followed=True,
+    filter_previously_followed=False,
     filter_business_accounts=True,
     filter_verified_accounts=True,
-    max_likes_per_day=200,
-    max_follows_per_day=200,
+
+    max_unlikes_per_day=1000,
+    max_unfollows_per_day=350,
+    max_comments_per_day=100,
+    max_blocks_per_day=100,
+    max_unblocks_per_day=100,
+    max_likes_to_like=1000,
+    min_likes_to_like=0,
+    max_likes_per_day=300,
+    max_follows_per_day=150,
+    max_messages_per_day=300,
     max_followers_to_follow=2000, #si tiene mas seguidores ignora la cuenta
-    min_followers_to_follow=60, #si tiene menos seguidores ignora
-    min_media_count_to_follow=10, #si tiene menos de estas publicaciones ignora
+    min_followers_to_follow=10, #si tiene menos seguidores ignora
+    min_media_count_to_follow=5, #si tiene menos de estas publicaciones ignora
     like_delay =10,
     unlike_delay =10,
     follow_delay =30,
     unfollow_delay =30,
-    comments_file='comentarios_instab0t.txt',
+    comments_file='../comentarios_instab0t.txt',
     comment_delay=60,
     )
 
@@ -122,7 +131,7 @@ def mg_ult_publ(cant):
         bot.like_user(user, amount=int(cant), filtration=False)
         time.sleep(2)
 
-def like_a_seguidores():
+def like_a_seguidores(usuario):
     usuarios_like = bot.get_followers(usuario)
     print("\nSe dará like a un total de ", str(len(usuarios_like)), " usuarios.")
     for user in usuarios_like:
@@ -130,9 +139,9 @@ def like_a_seguidores():
         bot.like_user(user, amount=1, filtration=False)
         time.sleep(2)
 
-def comentar_seguidores():
-    seguidores_like = define_usuarios()
-    print("\nTotal usuariosa seguir: ", str(len(seguidores_like)))
+def comentar_seguidores(usuario):
+    seguidores = bot.get_user_followers(usuario)
+    print("\nTotal usuarios a comentar: ", str(len(seguidores)))
     print("\nIniciando...\n")
 
     if(not os.path.isfile('comentarios_instab0t.txt')):
@@ -146,14 +155,12 @@ def comentar_seguidores():
 
         if(len(arch_comentarios) == 0):
             print("\nArchivo de comentarios vacío. Volviendo a menú.")
-
-        elif((len(arch_comentarios) > 0) and (len(seguidores_like) == 1)):
+            arch_comentarios.write("Buena foto!\n")
             print("Iniciando proceso de comentarios...")
-            bot.comment_users(seguidores_like)
+            bot.comment_users(seguidores)
         else:
             print("Iniciando proceso de comentarios...")
-            for seguidor in seguidores_like:
-                bot.comment_users(seguidor)
+            bot.comment_users(seguidores)
 
 def like_hashtag():
     print("""Indicar hashtag separados por una coma. (puede ser con o sin #)
@@ -168,7 +175,7 @@ def like_hashtag():
         bot.like_hashtag(hashtag, amount=cant_hash)
 
 
-def opciones():
+def opciones(usuario):
     clear()
     #imprimimos la challa:
     print("""
@@ -188,7 +195,7 @@ def opciones():
 
     4- Like a última publicación de seguidores.
 
-    5- Comentar última publicación de seguidores.
+    5- Comentar últimas publicaciones de seguidores.
 
     6- Dar like a ultimas publicaciones de uno o mas hashtag.
 
@@ -202,13 +209,13 @@ def opciones():
         seg_seguidores()
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
-        opciones()
+        opciones(usuario)
 
     elif(int(opcion) == 2):
         seg_seguidos()
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
-        opciones()
+        opciones(usuario)
 
     elif(int(opcion) == 3):
         clear()
@@ -217,39 +224,39 @@ def opciones():
         mg_ult_publ(cant_mg)
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
-        opciones()
+        opciones(usuario)
 
     elif(int(opcion) == 4):
         clear()
-        like_a_seguidores()
+        like_a_seguidores(usuario)
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
-        opciones()
+        opciones(usuario)
 
     elif(int(opcion) == 5):
         clear()
-        comentar_seguidores()
+        comentar_seguidores(usuario)
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
-        opciones()
-
+        opciones(usuario)
 
     elif(int(opcion) == 6):
         clear()
         like_hashtag()
         print("\n\n Proceso terminado!, Enter para volver al menú principal.")
         input()
-        opciones()
+        opciones(usuario)
 
     elif(int(opcion) == 7):
         clear()
         print("Saliendo de programa! [∵]┘")
         time.sleep(1)
         exit()
+
     else:
         print("Error: Debe elegir una opción válida!")
         time.sleep(2)
-        opciones()
+        opciones(usuario)
 
 
 def main(bot):
@@ -267,12 +274,12 @@ def main(bot):
     #y habilidanto las siguientes:
     #(modificamos el contenido interior de las comillas)
 
-    #usuario = input("Ingrese su nombre de usuario:\n")
-    #password = getpass("Ingrese contraseña:\n")
+    usuario = input("Ingrese su nombre de usuario:\n")
+    password = getpass("Ingrese contraseña:\n")
 
     #usuario fijo:
-    usuario = 'yagami44686'
-    password = 'corollake35'
+    #usuario = 'usuariodemibot'
+    #password = 'lacontraseña'
 
     clear()
 
@@ -281,7 +288,7 @@ def main(bot):
     #Ingresando a IG:
     bot.login(username=usuario, password=password) #tambien podemos agregar proxy=''
 
-    opciones()
+    opciones(usuario)
 
 #Y al final, El principio...
 main(bot)
