@@ -174,6 +174,23 @@ def like_hashtag():
     for hashtag in hash2like:
         bot.like_hashtag(hashtag, amount=cant_hash)
 
+def descarga_seguidores_seguidos():
+    usuarios = define_usuarios()
+    for user in usuarios:
+        print("Descargando seguidores de ", user)
+        seguidores = bot.get_user_followers(user)
+        archivo = open(user + "_seguidores.txt","a")
+        for seguidor in seguidores:
+            archivo.write(bot.get_username_from_user_id(seguidor) + "\n")
+        archivo.close()
+
+        print("Descargando seguidos por ", user)
+        seguidos = bot.get_user_following(user)
+        archivo = open(user + "_seguidos.txt","a")
+
+        for seguido in seguidos:
+            archivo.write(bot.get_username_from_user_id(seguido) + "\n")
+        archivo.close()
 
 def opciones(usuario):
     clear()
@@ -199,7 +216,9 @@ def opciones(usuario):
 
     6- Dar like a ultimas publicaciones de uno o mas hashtag.
 
-    7- Salir.
+    7- Descargar seguidores y seguidos de usuario.
+
+    8- Salir.
     """, "-"*40)
 
     opcion = input("[┐∵]┘ --> Ingrese opción:")
@@ -249,6 +268,14 @@ def opciones(usuario):
 
     elif(int(opcion) == 7):
         clear()
+        descarga_seguidores_seguidos()
+        print("\n\n Proceso terminado!, Enter para volver al menú principal.")
+        input()
+        opciones(usuario)
+
+
+    elif(int(opcion) == 8):
+        clear()
         print("Saliendo de programa! [∵]┘")
         time.sleep(1)
         exit()
@@ -278,8 +305,8 @@ def main(bot):
     password = getpass("Ingrese contraseña:\n")
 
     #usuario fijo:
-    #usuario = 'usuariodemibot'
-    #password = 'lacontraseña'
+    #usuario = 'usuario_aca'
+    #password = 'contraseña_aca'
 
     clear()
 
